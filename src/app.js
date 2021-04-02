@@ -57,11 +57,12 @@ app.get("/payment", (req, res) => {
 app.post("/payment", (req, res) => {
   accounts.credit.balance -= parseInt(req.body.amount);
   accounts.credit.available += parseInt(req.body.amount);
-  let accountsJSON = JSON.stringify(accounts);
-  fs.writeFileSync(path.join(__dirname, "json/accounts.json"), accountsJSON, {
-    encoding: "utf8",
-    flag: "w",
-  });
+  let accountsJSON = JSON.stringify(accounts, null, 4);
+  fs.writeFileSync(
+    path.join(__dirname, "json", "accounts.json"),
+    accountsJSON,
+    "utf8"
+  );
   res.render("payment", {
     message: "Payment Successsful",
     account: accounts.credit,
@@ -75,11 +76,12 @@ app.post("/transfer", (req, res) => {
   accounts[request.to].balance += parseInt(request.amount);
 
   // console.log(accounts[request.from]);
-  let accountsJSON = JSON.stringify(accounts);
-  fs.writeFileSync(path.join(__dirname, "json/accounts.json"), accountsJSON, {
-    encoding: "utf8",
-    flag: "w",
-  });
+  let accountsJSON = JSON.stringify(accounts, null, 4);
+  fs.writeFileSync(
+    path.join(__dirname, "json", "accounts.json"),
+    accountsJSON,
+    "utf8"
+  );
   res.render("transfer", { message: "Transfer Completed" });
 });
 app.listen(3000, () => {
