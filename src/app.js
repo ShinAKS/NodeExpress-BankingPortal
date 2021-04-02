@@ -1,7 +1,7 @@
 const fs = require("fs");
 const path = require("path");
 const express = require("express");
-const { applySpec } = require("ramda");
+const { accounts, users, writeJSON } = require("./data");
 
 const app = express();
 
@@ -13,20 +13,20 @@ app.use(
 );
 
 //Read the account Data from accounts file
-const accountData = fs.readFileSync("src/json/accounts.json", {
-  encoding: "utf8",
-  flag: "r",
-});
+// const accountData = fs.readFileSync("src/json/accounts.json", {
+//   encoding: "utf8",
+//   flag: "r",
+// });
 
-const accounts = JSON.parse(accountData);
+// const accounts = JSON.parse(accountData);
 
 //Read the users data from users file
-const userData = fs.readFileSync("src/json/users.json", {
-  encoding: "utf8",
-  flag: "r",
-});
+// const userData = fs.readFileSync("src/json/users.json", {
+//   encoding: "utf8",
+//   flag: "r",
+// });
 
-const users = JSON.parse(userData);
+// const users = JSON.parse(userData);
 
 app.get("/", (req, res) => {
   res.render("index", { title: "Account Summary", accounts: accounts });
@@ -57,12 +57,9 @@ app.get("/payment", (req, res) => {
 app.post("/payment", (req, res) => {
   accounts.credit.balance -= parseInt(req.body.amount);
   accounts.credit.available += parseInt(req.body.amount);
-  let accountsJSON = JSON.stringify(accounts, null, 4);
-  fs.writeFileSync(
-    path.join(__dirname, "json", "accounts.json"),
-    accountsJSON,
-    "utf8"
-  );
+  const accountsJSON = JSON.stringify(accounts, null, 4);
+  writeJSON(accountsJSON);
+
   res.render("payment", {
     message: "Payment Successsful",
     account: accounts.credit,
@@ -76,12 +73,9 @@ app.post("/transfer", (req, res) => {
   accounts[request.to].balance += parseInt(request.amount);
 
   // console.log(accounts[request.from]);
-  let accountsJSON = JSON.stringify(accounts, null, 4);
-  fs.writeFileSync(
-    path.join(__dirname, "json", "accounts.json"),
-    accountsJSON,
-    "utf8"
-  );
+  const accountsJSON = JSON.stringify(accounts, null, 4);
+
+  writeJSON(accountsJSON);
   res.render("transfer", { message: "Transfer Completed" });
 });
 app.listen(3000, () => {
